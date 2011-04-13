@@ -1,0 +1,46 @@
+
+SFTP Server v0.1
+
+Abhishek Srivastava
+(aas2234@columbia.edu)
+
+HOWTO Create Certificates and KeyStores for Client and Server 
+--------------------------------------------------------------
+
+1. Generate Server keystore and self-signed cert : 
+
+	keytool -genkey -keystore server-store.jks -keyalg rsa -alias server-alias
+
+
+2. Export server cert into file to import into client truststore:
+	
+	keytool -export -alias server-alias -keystore server-store.jks -rfc -file server-cert.cer
+
+3. Generate Client keystore and self-signed cert : 
+
+	keytool -genkey -keystore client-store.jks -keyalg rsa -alias client-alias
+
+4. Export client cert into file to import into server truststore : 
+
+	keytool -export -alias client-alias -keystore client-store.jks -rfc -file client-cert.cer
+
+
+5. Import each other's certs into each other's truststores : 
+	
+	keytool -import -alias client-alias -keystore server-store.jks -file client-cert.cer
+	keytool -import -alias server-alias -keystore client-store.jks -file server-cert.cer
+
+
+Running the Client and Server Programs
+---------------------------------------
+
+1. Client : 
+	
+	java -cp "." client 128.59.15.36 10100 client-store.jks client-data/
+
+	where 128.59.15.36 is the server IP-Address and 10100 is the server port.
+	
+2. Server : 
+	
+	java -cp "." server 10100 server-store.jks server-data/
+
